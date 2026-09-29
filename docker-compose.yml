@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: marathon-postgres
+    environment:
+      POSTGRES_USER: marathon
+      POSTGRES_PASSWORD: marathon
+      POSTGRES_DB: marathon
+    ports:
+      - "5432:5432"
+    volumes:
+      - marathon_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marathon -d marathon"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  marathon_pg_data:
