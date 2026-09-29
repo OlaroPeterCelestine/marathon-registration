@@ -1,10 +1,10 @@
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { COUNTRIES } from "@/lib/countries";
+import { isKnownContact, isKnownCountry } from "@/lib/countries";
+import { isKnownSocial } from "@/lib/socials";
 import { prisma } from "@/lib/prisma";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const COUNTRY_SET = new Set<string>(COUNTRIES);
 
 function clean(value: unknown, max: number) {
   if (typeof value !== "string") return "";
@@ -32,8 +32,8 @@ export async function POST(request: Request) {
   const email = clean(body.email, 180).toLowerCase();
   const name = clean(body.name, 120);
   const country = clean(body.country, 80);
-  const contact = clean(body.contact, 40);
-  const socials = clean(body.socials, 400);
+  const contact = clean(body.contact, 24);
+  const socials = clean(body.socials, 100);
 
   if (!name || !contact || !socials || !EMAIL.test(email)) {
     return NextResponse.json(
@@ -42,8 +42,22 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!COUNTRY_SET.has(country)) {
+  if (!isKnownCountry(country)) {
     return NextResponse.json({ error: "Choose a country from the list." }, { status: 400 });
+  }
+
+  if (!isKnownContact(contact)) {
+    return NextResponse.json(
+      { error: "Choose a country code and enter the phone number." },
+      { status: 400 },
+    );
+  }
+
+  if (!isKnownSocial(socials)) {
+    return NextResponse.json(
+      { error: "Choose a social platform and enter the handle." },
+      { status: 400 },
+    );
   }
 
   try {
