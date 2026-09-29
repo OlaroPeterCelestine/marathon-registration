@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "prisma migrate deploy && next start -H 0.0.0.0 -p ${PORT:-3000}",
     "postinstall": "prisma generate",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
@@ -15,6 +15,7 @@
   "dependencies": {
     "@prisma/client": "^6.16.3",
     "next": "^15.5.4",
+    "prisma": "^6.16.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
@@ -22,7 +23,6 @@
     "@types/node": "^22.18.8",
     "@types/react": "^19.1.15",
     "@types/react-dom": "^19.1.9",
-    "prisma": "^6.16.3",
     "typescript": "^5.9.2"
   }
 }
