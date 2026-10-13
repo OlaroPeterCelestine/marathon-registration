@@ -41,6 +41,12 @@ export function RegistrationForm() {
       return;
     }
 
+    const national = phone.replace(/^0+/, "");
+    const contact =
+      dial.iso === "UG"
+        ? `+256${(national.startsWith("7") ? national : `7${national}`).slice(0, 9)}`
+        : `+${dial.dial} ${phone}`;
+
     if (
       !SOCIAL_PLATFORMS.includes(platform as (typeof SOCIAL_PLATFORMS)[number]) ||
       !isValidHandle(handle)
@@ -62,7 +68,7 @@ export function RegistrationForm() {
           name: data.name,
           country: data.country,
           socials: formatSocial(platform, handle),
-          contact: `+${dial.dial} ${phone}`,
+          contact,
         }),
       });
       const body = (await response.json()) as { error?: string };

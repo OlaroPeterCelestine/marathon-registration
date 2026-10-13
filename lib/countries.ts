@@ -216,6 +216,8 @@ export function isKnownCountry(name: string) {
 }
 
 export function isKnownContact(contact: string) {
+  if (/^\+2567\d{8}$/.test(contact)) return true;
+
   const match = /^\+(\d{1,4}) (\d{4,14})$/.exec(contact);
   if (!match) return false;
   return DIAL_CODES.has(match[1]);
