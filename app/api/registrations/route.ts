@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
+import { isAdmin } from "@/lib/admin-auth";
 import { isKnownContact, isKnownCountry } from "@/lib/countries";
 import { isKnownSocial } from "@/lib/socials";
 import { prisma } from "@/lib/prisma";
@@ -12,6 +13,10 @@ function clean(value: unknown, max: number) {
 }
 
 export async function GET() {
+  if (!(await isAdmin())) {
+    return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+  }
+
   const registrations = await prisma.registration.findMany({
     orderBy: { createdAt: "desc" },
   });
