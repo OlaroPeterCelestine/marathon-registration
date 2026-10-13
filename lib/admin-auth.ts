@@ -3,8 +3,12 @@ import { cookies } from "next/headers";
 
 export const adminCookieName = "marathon_admin";
 
+export function adminPassword() {
+  return process.env.ADMIN_PASSWORD || "marathon-admin";
+}
+
 function secret() {
-  return process.env.ADMIN_SECRET || process.env.ADMIN_PASSWORD || "";
+  return process.env.ADMIN_SECRET || adminPassword();
 }
 
 export function signAdminSession() {

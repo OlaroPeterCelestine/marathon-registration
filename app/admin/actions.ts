@@ -3,7 +3,7 @@
 import { timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { adminCookieName, signAdminSession } from "@/lib/admin-auth";
+import { adminCookieName, adminPassword, signAdminSession } from "@/lib/admin-auth";
 
 export type LoginState = { error: string } | undefined;
 
@@ -16,11 +16,7 @@ function passwordsMatch(input: string, expected: string) {
 
 export async function loginAdmin(_prev: LoginState, formData: FormData): Promise<LoginState> {
   const password = String(formData.get("password") ?? "");
-  const expected = process.env.ADMIN_PASSWORD ?? "";
-
-  if (!expected) {
-    return { error: "Set ADMIN_PASSWORD in the environment before signing in." };
-  }
+  const expected = adminPassword();
 
   if (!passwordsMatch(password, expected)) {
     return { error: "That password is not correct." };
